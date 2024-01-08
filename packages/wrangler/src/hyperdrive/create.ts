@@ -1,6 +1,6 @@
 import { readConfig } from "../config";
 import { logger } from "../logger";
-import { createConfig } from "./client";
+import { CachingOptions, createConfig } from "./client";
 import { hyperdriveBetaWarning } from "./utils";
 import type {
 	CommonYargsArgv,
@@ -26,6 +26,16 @@ export function options(yargs: CommonYargsArgv) {
 				describe:
 					"Whether caching query results is disabled for this Hyperdrive config",
 			},
+      "cache-max-age": {
+        type: "number",
+        describe:
+          "The maximum lifetime of a query response in cache (seconds",
+      },
+      "cache-stale-while-revalidate": {
+        type: "number",
+        describe:
+          "How long before end of the cache max age to revalidate the cache entry. Stale results will be served during this period.",
+      },
 		})
 		.epilogue(hyperdriveBetaWarning);
 }
@@ -82,7 +92,11 @@ export async function handler(
 				user: url.username,
 				password: url.password,
 			},
-			caching: { disabled: args.cachingDisabled ?? false },
+			caching: {
+				disabled: args.cachingDisabled ?? false,
+				max_age: args.cacheMaxAge,
+				stale_while_revalidate: args.cacheStaleWhileRevalidate,
+			},
 		});
 		logger.log(
 			`✅ Created new Hyperdrive config\n`,

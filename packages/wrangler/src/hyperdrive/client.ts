@@ -26,8 +26,8 @@ export type OriginWithPassword = PublicOrigin & {
 
 export type CachingOptions = {
 	disabled?: boolean;
-	maxAge?: number;
-	staleWhileRevalidate?: number;
+	max_age?: number;
+	stale_while_revalidate?: number;
 };
 
 export type CreateUpdateHyperdriveBody = {

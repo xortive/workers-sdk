@@ -47,6 +47,16 @@ export function options(yargs: CommonYargsArgv) {
 				describe:
 					"Whether caching query results is disabled for this Hyperdrive config",
 			},
+      "cache-max-age": {
+        type: "number",
+        describe:
+          "The maximum lifetime of a query response in cache (seconds",
+      },
+      "cache-stale-while-revalidate": {
+        type: "number",
+        describe:
+          "How long before end of the cache max age to revalidate the cache entry. Stale results will be served during this period.",
+      },
 		})
 		.epilogue(hyperdriveBetaWarning);
 }
@@ -84,6 +94,12 @@ export async function handler(
 	if (args.cachingDisabled !== undefined) {
 		database.caching.disabled = args.cachingDisabled;
 	}
+	if (args.cacheMaxAge !== undefined) {
+		database.caching.max_age = args.cacheMaxAge
+	}
+  if (args.cacheStaleWhileRevalidate !== undefined) {
+    database.caching.stale_while_revalidate = args.cacheStaleWhileRevalidate
+  }
 	const updated = await updateConfig(config, args.id, database);
 	logger.log(
 		`✅ Updated ${updated.id} Hyperdrive config\n`,
